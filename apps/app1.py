@@ -62,60 +62,52 @@ print("label type %s" % type(df.tile[0]))
 initial_tile = opts[0]['label']
 
 # time series line graphs
-df2 = df[(df.tile == initial_tile)]
-trace_1 = go.Scatter(x = df2.date, y = df2['ndvi'],
-                     name = 'NDVI (vegetation index)',
-                     mode = 'lines+markers',
-                     line = dict(width = 2, color = 'rgb(0, 255, 0)'))
+def create_fig(value):    
+    df2 = df[(df.tile == value)]
+    	
+    trace_1 = go.Scatter(x = df2.date, y = df2['ndvi'],
+                        name = 'NDVI (vegetation index)',
+                        mode = 'lines+markers',
+                        line = dict(width = 2, color = 'rgb(0, 255, 0)'))
+                
+    trace_2 = go.Scatter(x = df2.date, y = df2['cc_p80_perc'],
+                        name = 'Cloud Cover (P > 0.8)',
+                        mode = 'lines+markers',
+                        line = dict(width = 2, color = 'gray', dash = 'dash'))
+     
+    trace_3 = go.Scatter(x = df2.date, y = df2['harvested'],
+                        name = 'Harvested (ha.)',
+                        mode = 'lines+markers',
+                        line = dict(width = 2, color = 'rgb(0, 0, 255)'))
+    
+    app_layout = go.Layout(title = 'Time Series Plot', hovermode = 'closest')
+    
+    fig = go.Figure(data = [], layout = app_layout)
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    fig.update_layout(title=f"Tile={value}")
 
-trace_2 = go.Scatter(x = df2.date, y = df2['cc_p80_perc'],
-                     name = 'Cloud Cover (P > 0.8)',
-                     mode = 'lines+markers',
-                     line = dict(width = 2, color = 'gray', dash = 'dash'))
+    # Set axes titles
+    #fig.update_xaxes(title_text="<b>Month</b>")
+    fig.update_yaxes(title_text="<b>ndvi & cloud cover</b>", secondary_y=False)
+    fig.update_yaxes(title_text="<b>harvested</b>", secondary_y=True)
 
-trace_3 = go.Scatter(x = df2.date, y = df2['harvested'],
-                     name = 'Harvested (ha.)',
-                     mode = 'lines+markers',
-                     line = dict(width = 2, color = 'rgb(0, 0, 255)'))
+    fig.add_trace(go.Scatter(trace_1), secondary_y=False,)
+    fig.add_trace(go.Scatter(trace_2), secondary_y=False,)
+    fig.add_trace(go.Scatter(trace_3), secondary_y=True,)
+    fig.update_layout(legend_orientation="h")
 
-app_layout = go.Layout(title = 'Time Series Plot', hovermode = 'closest')
-             
-fig = go.Figure(data = [], layout = app_layout)
-fig = make_subplots(specs=[[{"secondary_y": True}]])
-fig.update_layout(title=f"Tile={initial_tile}")
-fig.update_xaxes(title_text="<b>Month</b>")
+    return fig
 
-# Set y-axes titles
-fig.update_yaxes(title_text="<b>ndvi & cloud cover</b>", secondary_y=False)
-fig.update_yaxes(title_text="<b>harvested</b>", secondary_y=True)
+fig = create_fig(initial_tile)
 
-fig.add_trace(trace_1, secondary_y = False,)
-fig.add_trace(trace_2, secondary_y = False,)
-fig.add_trace(trace_3, secondary_y = True,) 
-
-"""
-layout = html.Div([
-    html.Div([dcc.Graph(id='plot1', figure=figureMap)],     
-    	     style={'width':"50%", 'display':'inline-block'}),
-    html.Div([dcc.Graph(id = 'plot', figure = fig)], 
-    	     style = {'width': "50%", 'display': 'inline-block'}),
-    html.Div([dcc.Dropdown(id = 'opt', options = opts),  
-              html.Div(id='text1'),]
-              #, style={'display': 'none'}
-    ),
-])
-
-
-"""
 body = dbc.Container([
-    html.H3('Time Series by Tile'),
     html.Div([dcc.Graph(id='plot1', figure=figureMap)], 
        	     style={'width':"50%", 'display':'inline-block'}),
     html.Div([dcc.Graph(id = 'plot', figure = fig)], 
        	     style = {'width': "50%", 'display': 'inline-block'}),
     html.Div([dcc.Dropdown(id = 'opt', options = opts),
-             html.Div(id='text1'),])
-                 #, style={'display': 'none'}),
+             html.Div(id='text1'),]
+             , style={'display': 'none'}),
 ])
     
 layout = html.Div([nav, body])        
@@ -135,42 +127,12 @@ def text_callback(hoverData):
 @app.callback(Output('plot', 'figure'),
              [Input('opt', 'value')])                             
 def update_figure(value):
-	
     if value == None:
         value = initial_tile
-	                           
-    fig = go.Figure(data = [], layout = app_layout)
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
-    fig.update_xaxes(title_text="<b>Month</b>")
-    # Set y-axes titles
-    fig.update_yaxes(title_text="<b>ndvi & cloud cover</b>", secondary_y=False)
-    fig.update_yaxes(title_text="<b>harvested</b>", secondary_y=True)
 
-                               
     print("Value: %s" % value)
-    df2 = df[(df.tile == value)]
-    	
-    trace_1 = go.Scatter(x = df2.date, y = df2['ndvi'],
-                        name = 'NDVI (vegetation index)',
-                        mode = 'lines+markers',
-                        line = dict(width = 2, color = 'rgb(0, 255, 0)'))
-                
-    trace_2 = go.Scatter(x = df2.date, y = df2['cc_p80_perc'],
-                        name = 'Cloud Cover (P > 0.8)',
-                        mode = 'lines+markers',
-                        line = dict(width = 2, color = 'gray', dash = 'dash'))
-     
-    trace_3 = go.Scatter(x = df2.date, y = df2['harvested'],
-                        name = 'Harvested (ha.)',
-                        mode = 'lines+markers',
-                        line = dict(width = 2, color = 'rgb(0, 0, 255)'))
-
-    fig.update_layout(title=f"Tile={value}")
-    fig.add_trace(go.Scatter(trace_1), secondary_y=False,)
-    fig.add_trace(go.Scatter(trace_2), secondary_y=False,)
-    fig.add_trace(go.Scatter(trace_3), secondary_y=True,)
-
-    return fig
-
-#def display_value(value):
-#    return 'You have selected "{}"'.format(value)
+    
+    fig = create_fig(value)
+    return(fig)
+    
+    

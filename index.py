@@ -15,9 +15,9 @@ app.layout = html.Div([
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
 def display_page(pathname):
-    if pathname == '/apps/app1':
+    if pathname == '/harvest-tile':
         return app1.layout
-    elif pathname == '/apps/app2':
+    elif pathname == '/aggregate-harvest':
         return app2.layout
     else:
         return app1.layout
