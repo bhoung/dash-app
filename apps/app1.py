@@ -29,20 +29,20 @@ print(df_sum.head())
 print(df_sum)
 
 # choropleth map
-figureMap = go.Figure(go.Choroplethmapbox(geojson=tiles_geojson, 
-                                          locations=df_sum.index, 
-                                          z=df_sum.harvested,
-                                          colorscale="Viridis", 
-                                          zmin=17443,
-                                          zmax=2962745,
-                                          marker_opacity=0.5, 
-                                          marker_line_width=0))
+map = go.Figure(go.Choroplethmapbox(geojson=tiles_geojson, 
+                                     locations=df_sum.index, 
+                                     z=df_sum.harvested,
+                                     colorscale="Viridis", 
+                                     zmin=17443,
+                                     zmax=2962745,
+                                     marker_opacity=0.5, 
+                                     marker_line_width=0))
 
-figureMap.update_layout(title = "Harvested Sugar Cane Area (ha) by Tile",
-                        mapbox_style="satellite",
-                        mapbox_accesstoken=mapbox_token,
-                        mapbox_zoom=7.5, 
-                        mapbox_center = {"lat": -20.4168, "lon": 148.356})
+map.update_layout(title = "Harvested Sugar Cane Area (ha) by Tile",
+                   mapbox_style="satellite",
+                   mapbox_accesstoken=mapbox_token,
+                   mapbox_zoom=7.5, 
+                   mapbox_center = {"lat": -20.4168, "lon": 148.356})
 
 # convert to hectares
 df['harvested'] = df['harvested'] * 100 / 10000
@@ -62,7 +62,7 @@ print("label type %s" % type(df.tile[0]))
 initial_tile = opts[0]['label']
 
 # time series line graphs
-def create_fig(value):    
+def create_graph(value):    
     df2 = df[(df.tile == value)]
     	
     trace_1 = go.Scatter(x = df2.date, y = df2['ndvi'],
@@ -82,33 +82,33 @@ def create_fig(value):
     
     app_layout = go.Layout(title = 'Time Series Plot', hovermode = 'closest')
     
-    fig = go.Figure(data = [], layout = app_layout)
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
-    fig.update_layout(title=f"Tile={value}")
+    graph = go.Figure(data = [], layout = app_layout)
+    graph = make_subplots(specs=[[{"secondary_y": True}]])
+    graph.update_layout(title=f"Tile={value}")
 
     # Set axes titles
-    #fig.update_xaxes(title_text="<b>Month</b>")
-    fig.update_yaxes(title_text="<b>ndvi & cloud cover</b>", secondary_y=False)
-    fig.update_yaxes(title_text="<b>harvested</b>", secondary_y=True)
+    #graph.update_xaxes(title_text="<b>Month</b>")
+    graph.update_yaxes(title_text="<b>ndvi & cloud cover</b>", secondary_y=False)
+    graph.update_yaxes(title_text="<b>harvested</b>", secondary_y=True)
 
-    fig.add_trace(go.Scatter(trace_1), secondary_y=False,)
-    fig.add_trace(go.Scatter(trace_2), secondary_y=False,)
-    fig.add_trace(go.Scatter(trace_3), secondary_y=True,)
-    fig.update_layout(legend_orientation="h")
+    graph.add_trace(go.Scatter(trace_1), secondary_y=False,)
+    graph.add_trace(go.Scatter(trace_2), secondary_y=False,)
+    graph.add_trace(go.Scatter(trace_3), secondary_y=True,)
+    graph.update_layout(legend_orientation="h")
+                                  
+    return graph
 
-    return fig
-
-fig = create_fig(initial_tile)
+graph = create_graph(initial_tile)
 
 body = dbc.Container([
-    html.Div([dcc.Graph(id='plot1', figure=figureMap)], 
+    html.Div([dcc.Graph(id='plot1', figure = map)], 
        	     style={'width':"50%", 'display':'inline-block'}),
-    html.Div([dcc.Graph(id = 'plot', figure = fig)], 
+    html.Div([dcc.Graph(id = 'plot2', figure = graph)], 
        	     style = {'width': "50%", 'display': 'inline-block'}),
     html.Div([dcc.Dropdown(id = 'opt', options = opts),
              html.Div(id='text1'),]
              , style={'display': 'none'}),
-])
+])                                       
     
 layout = html.Div([nav, body])        
 
@@ -118,21 +118,21 @@ def text_callback(hoverData):
     if hoverData is None:
         print(initial_tile)
         return initial_tile
-    else:
-        print(hoverData)
+    else:                                                         
+        print(hoverData)                           
         x = hoverData["points"][0]["location"]
         y = df.loc[df['id'] == x, 'tile'].iloc[0]
         return y
               
-@app.callback(Output('plot', 'figure'),
+@app.callback(Output('plot2', 'figure'),
              [Input('opt', 'value')])                             
-def update_figure(value):
+def update_graph(value):
     if value == None:
         value = initial_tile
 
     print("Value: %s" % value)
     
-    fig = create_fig(value)
-    return(fig)
+    graph = create_graph(value)
+    return(graph)
     
     
