@@ -65,7 +65,7 @@ def create_graph():
                                  mode = 'lines+markers', 
                                  x = df_sum['date'], 
                                  y = df_sum['harvested'])], layout = layout)
-    graph.update_xaxes(title_text="*Hover over the harvested area time series to update the choropleth map")
+    graph.update_xaxes(title_text="*Hover over the harvested area time series to display the harvest area by tile at different points in time")
     return(graph)
 
 graph = create_graph()
@@ -74,8 +74,7 @@ map = create_map(dates['date'][0])
 
 body = dbc.Container([               
     html.Div([dcc.Graph(id='app2_plot1', figure = graph)], style = {'width': '800px'}),
-    html.Div([dcc.Dropdown(id = 'app2_opt', options = opts), html.Div(id='text1'),]),
-         #, style={'display': 'none'}),
+    html.Div([dcc.Dropdown(id = 'app2_opt', options = opts), html.Div(id='text1'),], style={'display': 'none'}),
     html.Div([dcc.Graph(id='app2_plot2', figure = map)], style = {'width': '800px', 'height':'400px'}),
 ])
     
@@ -96,6 +95,8 @@ def text_callback(hoverData):
 @app.callback(Output('app2_plot2', 'figure'),
               [Input('app2_opt', 'value')])
 def update_map(value):
+	if value is None:
+	    value = dates['date'][0]
 	print(value)
 	map2 = create_map(value)
 	#print(map2)

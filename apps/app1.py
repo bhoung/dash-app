@@ -30,19 +30,19 @@ print(df_sum)
 
 # choropleth map
 map = go.Figure(go.Choroplethmapbox(geojson=tiles_geojson, 
-                                     locations=df_sum.index, 
-                                     z=df_sum.harvested,
-                                     colorscale="Viridis", 
-                                     zmin=17443,
-                                     zmax=2962745,
-                                     marker_opacity=0.5, 
-                                     marker_line_width=0))
-
-map.update_layout(title = "Harvested Sugar Cane Area (ha) by Tile",
-                   mapbox_style="satellite",
-                   mapbox_accesstoken=mapbox_token,
-                   mapbox_zoom=7.5, 
-                   mapbox_center = {"lat": -20.4168, "lon": 148.356})
+                                    locations=df_sum.index, 
+                                    z=df_sum.harvested,
+                                    colorscale="Viridis", 
+                                    zmin=17443,
+                                    zmax=2962745,
+                                    marker_opacity=0.5, 
+                                    marker_line_width=0))
+                                               
+map.update_layout(title = "Harvested Sugar Cane Area (ha) by Tile",  
+                  mapbox_style = "satellite",            
+                  mapbox_accesstoken = mapbox_token,
+                  mapbox_zoom = 7.5, 
+                  mapbox_center = {"lat": -20.4168, "lon": 148.356},)
 
 # convert to hectares
 df['harvested'] = df['harvested'] * 100 / 10000
@@ -84,7 +84,7 @@ def create_graph(value):
     
     graph = go.Figure(data = [], layout = app_layout)
     graph = make_subplots(specs=[[{"secondary_y": True}]])
-    graph.update_layout(title=f"Tile={value}")
+    graph.update_layout(title=f"Tile = {value}: Harvested Sugar Cane (ha)")
 
     # Set axes titles
     #graph.update_xaxes(title_text="<b>Month</b>")
@@ -101,13 +101,10 @@ def create_graph(value):
 graph = create_graph(initial_tile)
 
 body = dbc.Container([
-    html.Div([dcc.Graph(id='plot1', figure = map)], 
-       	     style={'width':"50%", 'display':'inline-block'}),
-    html.Div([dcc.Graph(id = 'plot2', figure = graph)], 
-       	     style = {'width': "50%", 'display': 'inline-block'}),
-    html.Div([dcc.Dropdown(id = 'opt', options = opts),
-             html.Div(id='text1'),]
-             , style={'display': 'none'}),
+    html.Div([dcc.Graph(id='plot1', figure = map)], style={'width':"50%", 'display':'inline-block'}),
+    html.Div([dcc.Graph(id = 'plot2', figure = graph)], style = {'width': "50%", 'display': 'inline-block'}),
+    html.Div([dcc.Dropdown(id = 'opt', options = opts), html.Div(id='text1'),], style={'display': 'none'}),
+    html.P("""*Hover over the tile area to display the harvest time series for the corresponding tile""")
 ])                                       
     
 layout = html.Div([nav, body])        
@@ -122,7 +119,7 @@ def text_callback(hoverData):
         print(hoverData)                           
         x = hoverData["points"][0]["location"]
         y = df.loc[df['id'] == x, 'tile'].iloc[0]
-        return y
+        return y                             
               
 @app.callback(Output('plot2', 'figure'),
              [Input('opt', 'value')])                             
@@ -132,7 +129,7 @@ def update_graph(value):
 
     print("Value: %s" % value)
     
-    graph = create_graph(value)
+    graph = create_graph(value)  
     return(graph)
     
     
