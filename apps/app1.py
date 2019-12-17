@@ -128,7 +128,6 @@ def update_graph(value):
         value = initial_tile
 
     print("Value: %s" % value)
-    
     graph = create_graph(value)  
     return(graph)
     
