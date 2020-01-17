@@ -18,20 +18,19 @@ Sugar cane harvest amounts were determined by processing 512 x 512 images based 
 
 ### Figure 1: Example Sugar Cane Tile Image 
 
-![example image](./images/7680-10240-TCI-2016-12-22.png =250x250 "example image")
+<img src=./images/7680-10240-TCI-2016-12-22.png width="250" height="250">
 
 This required an adjustement for masked images to filter out non sugar cane farm regions, while the satellites also captured images across 10 colour frequency bands. 
 
 ### Figure 2: Harvested Regions in Example Sugar Cane Tile Image 
-
-![harvested image](./images/2016-12-22.png =250x250)
+<img src=./images/2016-12-22.png width="250" height="250">
 
 ### Figure 3: Example of Tile Image with Cloud Cover
-
-![cloud image](./images/7680-10240-TCI-2017-05-31.png =250x250)
+<img src=./images/7680-10240-TCI-2017-05-31.png width="250" height="250">
 
 ### Figure 4: Example of Mask from Cloud Cover Detection
-![cloud mask](./images/7680-10240-mask-2017-05-31.png =250x250)
+<img src=./images/7680-10240-mask-2017-05-31.png width="250" height="250">
+
 
 We accessed the sentinel-hub api to identify masks of cloud cover. Their service applied a machine learning method on a larger hand-coded dataset across mutiple colour frequency bands. 
 
