@@ -47,3 +47,7 @@ To help determine optimal harvest time, a vegetation index was calculated from p
    |-- app2.py
 
 ```
+
+# Instructions
+
+To run: python index.py as opposed to python -m flask run for single page dash apps 
