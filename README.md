@@ -1,10 +1,13 @@
 # Satellite Datathon Dash App
 
+**Live demo on Heroku: https://satellite-dash-app.herokuapp.com/**
+
 This dash app presents data from satellite images of sugar cane farms from North East Queensland from 2016 to 2019, and was created as part of the [Data Science Melbourne Datathon](https://medium.com/satellite-intelligence), August - November 2019. 
 
 For the competition, our team built a choropleth & time series app to provide insights on the harvesting of sugar cane farms for mill processors, fulfilling the requirement of building an interactive Data2App website.
 
-The [code repository](https://github.com/satellite-datathon/sdthon) and [final video presentation](https://drive.google.com/file/d/1HKftlyNhEO_gQUNMjIgwD9MlNCGQCs6K/view) are also available online.
+The [live demo](https://satellite-dash-app.herokuapp.com/
+), [code repository](https://github.com/satellite-datathon/sdthon) and [final video presentation](https://drive.google.com/file/d/1HKftlyNhEO_gQUNMjIgwD9MlNCGQCs6K/view) are also available online.
 
 ![dash app demo](./images/satellite_dashboard_demo.gif)
 
