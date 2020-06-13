@@ -52,4 +52,4 @@ To help determine optimal harvest time, a vegetation index was calculated from p
 
 To run: python index.py as opposed to python -m flask run for single page dash apps 
 
-web: gunicorn index:app --timeout 300
+web: gunicorn index:server --timeout 300
